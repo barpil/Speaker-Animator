@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:custom="clr-namespace:SpeakerAnimator.View.Panels"
         xmlns:local="clr-namespace:SpeakerAnimator"
         xmlns:view="clr-namespace:SpeakerAnimator.View"
         mc:Ignorable="d"
@@ -24,5 +25,8 @@
             <view:MouthCanvas x:Name="MouthCanvas"/>
         </Grid>
         
+        <Grid Grid.Column="2">
+            <custom:DebugPanel></custom:DebugPanel>
+        </Grid>
     </Grid>
 </Window>
