@@ -1,0 +1,25 @@
+# =========================
+# Godot Engine
+# =========================
+.godot/
+.mono/
+
+# =========================
+# C# / .NET
+# =========================
+bin/
+obj/
+
+# =========================
+# JetBrains Rider / IDE
+# =========================
+.idea/
+*.sln.DotSettings.user
+*.suo
+*.user
+*.userprefs
+*.csproj.user
+build/
+builds/
+export/
+exports/

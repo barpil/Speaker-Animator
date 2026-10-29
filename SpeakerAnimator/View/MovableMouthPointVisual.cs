@@ -14,11 +14,15 @@ public class MovableMouthPointVisual
     
     private bool _isDragged;
     private Point _dragPointOffset;
+    private double _radius;
+    
+    public event Action<Point> PositionChanged;
 
     public MovableMouthPointVisual(Canvas parentCanvas, Point initialPosition, Brush fillColor, Brush outlineColor,
         double radius = 10)
     {
         _parentCanvas = parentCanvas;
+        _radius = radius;
         MouthPointGraphicElement = new Ellipse
         {
             Width = radius*2, Height = radius*2, Fill = fillColor,
@@ -27,6 +31,7 @@ public class MovableMouthPointVisual
         //zeby podana pozycja to byl srodek kolka a nie lewy gorny rog
         Canvas.SetLeft(MouthPointGraphicElement, initialPosition.X-radius);
         Canvas.SetTop(MouthPointGraphicElement, initialPosition.Y-radius);
+        Panel.SetZIndex(MouthPointGraphicElement, 15);
 
         MouthPointGraphicElement.MouseLeftButtonDown += OnMouthPointDragStart;
         MouthPointGraphicElement.MouseMove += OnMouthPointDragged;
@@ -55,10 +60,13 @@ public class MovableMouthPointVisual
         if (_isDragged)
         {
             Point currentMousePosition = e.GetPosition(_parentCanvas);
-            Canvas.SetLeft(MouthPointGraphicElement, 
-                currentMousePosition.X-_dragPointOffset.X);
-            Canvas.SetTop(MouthPointGraphicElement, 
-                currentMousePosition.Y-_dragPointOffset.Y);
+            double left = currentMousePosition.X - _dragPointOffset.X;
+            double top = currentMousePosition.Y - _dragPointOffset.Y;
+
+            Canvas.SetLeft(MouthPointGraphicElement, left);
+            Canvas.SetTop(MouthPointGraphicElement, top);
+            Point logicalCenter = new Point(left + _radius, top + _radius);
+            PositionChanged?.Invoke(logicalCenter);
         }
     }
 
