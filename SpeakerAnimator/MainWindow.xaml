@@ -20,10 +20,12 @@
         
         <GridSplitter Grid.Column="1" Width="5" Background="DarkGray"></GridSplitter>
         
+        <AdornerDecorator Grid.Column="0">
+            <Grid  Background="#EEC170">
+                <view:MouthCanvas x:Name="MouthCanvas"/>
+            </Grid>
+        </AdornerDecorator>
         
-        <Grid Grid.Column="0" Background="#EEC170">
-            <view:MouthCanvas x:Name="MouthCanvas"/>
-        </Grid>
         
         <Grid Grid.Column="2">
             <custom:DebugPanel></custom:DebugPanel>

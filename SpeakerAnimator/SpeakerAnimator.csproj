@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Model\Mouth\" />
+      <Folder Include="Model\Mouth\BlendShapes\" />
     </ItemGroup>
 
 </Project>

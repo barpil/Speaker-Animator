@@ -4,6 +4,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using SpeakerAnimator.Model.Splines;
 using SpeakerAnimator.Model.utils;
+using SpeakerAnimator.View.BlendShapes;
 using SpeakerAnimator.View.MouthElementHelpers;
 
 namespace SpeakerAnimator.View;
@@ -68,7 +69,11 @@ public class AnimatedMouthController
             _teethPointVisuals.Add(toothPointVisual);
         }
         _parentCanvas.Children.Add(_teethCanvas);
-
+        
+        //TEST
+        new MovableMouthRigPoint(_parentCanvas, new Point(20, 20), Brushes.Blue, Brushes.Black, "TEST");
+        
+        
         Instance = this;
         UpdateVisuals();
     }
