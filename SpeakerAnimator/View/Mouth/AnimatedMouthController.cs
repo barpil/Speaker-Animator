@@ -34,9 +34,12 @@ public class AnimatedMouthController
     private Path _splinePath;
 
     private Canvas _teethCanvas;
+
+    private MouthRig _mouthRig;
     
     
     public AnimatedMouthController(Canvas parentParentCanvas, List<Point> initialLipPointPositions, List<Point> initialTeethPointPositions,
+        List<(string, Point)> initialRigPositions,
         string? keyPointFillColorHex = null, string? keyPointOutlineColorHex = null,
         string? lineFillColorHex = null, string? lineOutlineColorHex = null)
     {
@@ -47,7 +50,7 @@ public class AnimatedMouthController
         _teethPointVisuals = new List<MovableTeethPointVisual>();
         _teethCanvas = new Canvas();
         
-
+        //usta
         for (int i = 0; i < _lipKeyPointPositions.Count; i++)
         {
             int idx = i;
@@ -59,7 +62,7 @@ public class AnimatedMouthController
         (_polyBezierSegment, _figure, _splinePath) = LipsVisualHelper.CreateLipOutlineSplinePath(LINE_THICKNESS, lineFillColorHex, lineOutlineColorHex);
         _parentCanvas.Children.Add(_splinePath);
         
-        
+        //zeby
         for (int i = 0; i < _teethKeyPointPositions.Count; i++)
         {
             int idx = i;
@@ -69,9 +72,18 @@ public class AnimatedMouthController
             _teethPointVisuals.Add(toothPointVisual);
         }
         _parentCanvas.Children.Add(_teethCanvas);
-        
-        //TEST
-        new MovableMouthRigPoint(_parentCanvas, new Point(20, 20), Brushes.Blue, Brushes.Black, "TEST");
+
+        //rig
+        _mouthRig = new MouthRig(_parentCanvas, initialRigPositions);
+        foreach (var lp in _lipPointVisuals)
+        {
+            _mouthRig.RegisterPoint(lp, isTeeth: false);
+        }
+        foreach (var tp in _teethPointVisuals)
+        {
+            _mouthRig.RegisterPoint(tp, isTeeth: true);
+        }
+        _mouthRig.CalculateWeights();
         
         
         Instance = this;

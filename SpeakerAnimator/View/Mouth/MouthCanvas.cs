@@ -6,6 +6,9 @@ namespace SpeakerAnimator.View;
 
 public class MouthCanvas : Canvas
 {
+    public static MouthCanvas? Instance;
+    
+    
     private List<MovableLipPointVisual> _mouthPointVisuals = new List<MovableLipPointVisual>();
 
     private AnimatedMouthController _animatedMouthController;
@@ -18,6 +21,14 @@ public class MouthCanvas : Canvas
         new Point(80, 100), new Point(320, 100),
         new Point(80, 300) , new Point(320, 300)
     ];
+
+    private readonly List<(string, Point)> DEFAULT_RIGPOINT_POSITIONS =
+    [
+        ("top_lip", new Point(200, 70)),
+        ("left_side", new Point(70, 200)), ("right_side", new Point(330, 200)),
+        ("bottom_lip", new Point(200, 330)),
+        ("jaw", new Point(200, 360))
+    ];
     
     
     
@@ -25,8 +36,16 @@ public class MouthCanvas : Canvas
     {
         Background = Brushes.Transparent;
 
-        _animatedMouthController = new AnimatedMouthController(this, DEFAULT_MOUTH_LIPPOINT_POSITIONS, DEFAULT_MOUTH_TEETHPOINT_POSITIONS);
+        CreateNewAnimatedMouthController();
+        Instance = this;
+    }
 
+
+    public void CreateNewAnimatedMouthController()
+    {
+        Children.Clear();
+        _animatedMouthController = new AnimatedMouthController(this, DEFAULT_MOUTH_LIPPOINT_POSITIONS,
+            DEFAULT_MOUTH_TEETHPOINT_POSITIONS, DEFAULT_RIGPOINT_POSITIONS);
     }
 
     

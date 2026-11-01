@@ -1,14 +1,18 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
+using SpeakerAnimator.Model;
 using SpeakerAnimator.View.utils;
 
 namespace SpeakerAnimator.View.BlendShapes;
 
-public class MovableMouthRigPoint : MovablePointVisual
+public class MovableMouthRigPointVisual : MovablePointVisual
 {
-    public MovableMouthRigPoint(
+
+    
+    
+    public MovableMouthRigPointVisual(
         Canvas parentCanvas,
         Point initialPosition,
         Brush fillColor,
@@ -21,4 +25,10 @@ public class MovableMouthRigPoint : MovablePointVisual
             PointGraphicElement, labelContent, new Point(radius,radius-18), 12);
         ZIndex = 20;
     }
+
+    
+    
+    
+    
+    
 }

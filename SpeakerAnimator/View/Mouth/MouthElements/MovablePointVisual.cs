@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using SpeakerAnimator.Model;
 
 namespace SpeakerAnimator.View;
 
@@ -13,10 +14,11 @@ public abstract class MovablePointVisual
     
     
     private readonly Canvas _parentCanvas;
-    
+    public Point NeutralPosition;
     private bool _isDragged;
     private Point _dragPointOffset;
     private double _radius;
+    public Point CurrentPosition;
     
     public event Action<Point>? PositionChanged;
 
@@ -25,6 +27,8 @@ public abstract class MovablePointVisual
     {
         _parentCanvas = parentCanvas;
         _radius = radius;
+        CurrentPosition = initialPosition;
+        NeutralPosition = initialPosition;
         PointGraphicElement = new Ellipse
         {
             Width = radius*2, Height = radius*2, Fill = fillColor,
@@ -38,6 +42,8 @@ public abstract class MovablePointVisual
         PointGraphicElement.MouseLeftButtonDown += OnPointDragStart;
         PointGraphicElement.MouseMove += OnPointDragged;
         PointGraphicElement.MouseLeftButtonUp += OnPointDragReleased;
+        PositionChanged += UpdateNeutralPosition;
+
 
         parentCanvas.Children.Add(PointGraphicElement);
     }
@@ -65,10 +71,7 @@ public abstract class MovablePointVisual
             double left = currentMousePosition.X - _dragPointOffset.X;
             double top = currentMousePosition.Y - _dragPointOffset.Y;
 
-            Canvas.SetLeft(PointGraphicElement, left);
-            Canvas.SetTop(PointGraphicElement, top);
-            Point logicalCenter = new Point(left + _radius, top + _radius);
-            PositionChanged?.Invoke(logicalCenter);
+            MoveTo(new Point(left+_radius, top+_radius));
         }
     }
 
@@ -80,5 +83,18 @@ public abstract class MovablePointVisual
             PointGraphicElement.ReleaseMouseCapture();
             e.Handled = true;
         }
+    }
+    
+    private void UpdateNeutralPosition(Point newPosition)
+    {
+        if (StateController.EditableRigPoints) NeutralPosition = newPosition;
+    }
+
+    public void MoveTo(Point newPosition)
+    {
+        Canvas.SetLeft(PointGraphicElement, newPosition.X - _radius);
+        Canvas.SetTop(PointGraphicElement, newPosition.Y - _radius);
+        CurrentPosition = newPosition;
+        PositionChanged?.Invoke(newPosition);
     }
 }

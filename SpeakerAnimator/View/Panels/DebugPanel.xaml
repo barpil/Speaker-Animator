@@ -7,9 +7,17 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <StackPanel Margin="10" HorizontalAlignment="Left" >
-            <Button Content="Print KeyPoint List" Background="Aquamarine" Width="120" Height="30"
+        <StackPanel Margin="10" HorizontalAlignment="Left">
+            <Button Content="Print KeyPoint List" Background="Aquamarine" Width="120" Height="30" HorizontalAlignment="Left"
                     x:Name="PrintKeyPointListBtn" Click="PrintKeyPointListBtn_Click"/>
+            <StackPanel Orientation="Horizontal" >
+                <Button Content="Toggle Editable Points" Background="Aquamarine" Width="120" Height="30" HorizontalAlignment="Left"
+                        x:Name="ToggleEditableBtn" Click="ToggleEditablePointsBtn_Click"/>
+                <Label x:Name="EditablePointsStatusLabel">STATUS</Label>
+            </StackPanel>
+            <Button Content="Reset To Neutrals" Background="Aquamarine" Width="120" Height="30" HorizontalAlignment="Left"
+                    x:Name="ResetToNeutralsBtn" Click="ResetToNeutralsBtn_Click"/>
+            
             
         </StackPanel>
         
