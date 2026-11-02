@@ -15,7 +15,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" MinWidth="540"></ColumnDefinition>
             <ColumnDefinition Width="5"></ColumnDefinition>
-            <ColumnDefinition Width="*" MinWidth="360"></ColumnDefinition>
+            <ColumnDefinition Width="400" MinWidth="360"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         
         <GridSplitter Grid.Column="1" Width="5" Background="DarkGray"></GridSplitter>

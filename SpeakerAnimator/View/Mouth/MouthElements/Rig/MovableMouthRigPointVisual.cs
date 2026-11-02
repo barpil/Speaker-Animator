@@ -24,6 +24,18 @@ public class MovableMouthRigPointVisual : MovablePointVisual
         LabelAdorner.AddLabelAdornerToElement(
             PointGraphicElement, labelContent, new Point(radius,radius-18), 12);
         ZIndex = 20;
+
+        StateController.MouthMovementOptionChanged += () =>
+        {
+            if (StateController.MouthMovementOption == MouthMovementOption.Rig)
+            {
+                PointGraphicElement.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                PointGraphicElement.Visibility = Visibility.Collapsed;
+            }
+        };
     }
 
     

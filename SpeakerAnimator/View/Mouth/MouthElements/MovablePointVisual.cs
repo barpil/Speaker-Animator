@@ -87,7 +87,7 @@ public abstract class MovablePointVisual
     
     private void UpdateNeutralPosition(Point newPosition)
     {
-        if (StateController.EditableRigPoints) NeutralPosition = newPosition;
+        if (StateController.EditablePoints) NeutralPosition = newPosition;
     }
 
     public void MoveTo(Point newPosition)

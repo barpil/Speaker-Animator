@@ -2,6 +2,8 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using SpeakerAnimator.Model;
+using SpeakerAnimator.Model.Mouth.BlendShapes;
 using SpeakerAnimator.Model.Splines;
 using SpeakerAnimator.Model.utils;
 using SpeakerAnimator.View.BlendShapes;
@@ -22,12 +24,15 @@ public class AnimatedMouthController
     private const double TOOTH_HEIGHT = 50;
     private const double TEETH_GAP_PRC = 0.1;
 
+    private readonly List<Point> _defaultLipPositions;
+    private readonly List<Point> _defaultTeethPositions;
+    private readonly List<(string, Point)> _defaultRigPositions;
     
     private readonly Canvas _parentCanvas;
     private readonly List<Point> _lipKeyPointPositions;
-    private readonly List<MovableLipPointVisual> _lipPointVisuals;
+    public List<MovableLipPointVisual> LipPointVisuals { get; private set; }
     private readonly List<Point> _teethKeyPointPositions;
-    private readonly List<MovableTeethPointVisual> _teethPointVisuals;
+    public List<MovableTeethPointVisual> TeethPointVisuals { get; private set; }
 
     private PolyBezierSegment _polyBezierSegment;
     private PathFigure _figure;
@@ -45,10 +50,14 @@ public class AnimatedMouthController
     {
         _parentCanvas = parentParentCanvas;
         _lipKeyPointPositions = new List<Point>(initialLipPointPositions);
-        _lipPointVisuals = new List<MovableLipPointVisual>();
+        _defaultLipPositions = new List<Point>(initialLipPointPositions);
+        LipPointVisuals = new List<MovableLipPointVisual>();
         _teethKeyPointPositions = new List<Point>(initialTeethPointPositions);
-        _teethPointVisuals = new List<MovableTeethPointVisual>();
+        _defaultTeethPositions = new List<Point>(initialTeethPointPositions);
+        TeethPointVisuals = new List<MovableTeethPointVisual>();
         _teethCanvas = new Canvas();
+
+        _defaultRigPositions = new List<(string, Point)>(initialRigPositions);
         
         //usta
         for (int i = 0; i < _lipKeyPointPositions.Count; i++)
@@ -57,7 +66,7 @@ public class AnimatedMouthController
             var mouthPointVisual =
                 LipsVisualHelper.CreateLipPointVisual(_parentCanvas, KEY_POINT_RADIUS, _lipKeyPointPositions[i], keyPointFillColorHex, keyPointOutlineColorHex);
             mouthPointVisual.PositionChanged += newPosition => OnLipKeyPointMoved(idx, newPosition);
-            _lipPointVisuals.Add(mouthPointVisual);
+            LipPointVisuals.Add(mouthPointVisual);
         }
         (_polyBezierSegment, _figure, _splinePath) = LipsVisualHelper.CreateLipOutlineSplinePath(LINE_THICKNESS, lineFillColorHex, lineOutlineColorHex);
         _parentCanvas.Children.Add(_splinePath);
@@ -69,21 +78,29 @@ public class AnimatedMouthController
             var toothPointVisual =
                 TeethVisualHelper.CreateToothPointVisual(_parentCanvas, _teethKeyPointPositions[i], KEY_POINT_RADIUS);
             toothPointVisual.PositionChanged += newPosition => OnToothKeyPointMoved(idx, newPosition);
-            _teethPointVisuals.Add(toothPointVisual);
+            TeethPointVisuals.Add(toothPointVisual);
         }
         _parentCanvas.Children.Add(_teethCanvas);
 
         //rig
-        _mouthRig = new MouthRig(_parentCanvas, initialRigPositions);
-        foreach (var lp in _lipPointVisuals)
+        if (StateController.MouthMovementOption == MouthMovementOption.Rig)
         {
-            _mouthRig.RegisterPoint(lp, isTeeth: false);
+            _mouthRig = new MouthRig(_parentCanvas, initialRigPositions);
+            foreach (var lp in LipPointVisuals)
+            {
+                _mouthRig.RegisterPoint(lp, isTeeth: false);
+            }
+
+            foreach (var tp in TeethPointVisuals)
+            {
+                _mouthRig.RegisterPoint(tp, isTeeth: true);
+            }
+
+            _mouthRig.CalculateWeights();
+        }else if(StateController.MouthMovementOption == MouthMovementOption.Blendshapes)
+        { 
+            BlendShapesPoseStorage.Initialize(TeethPointVisuals.Concat<MovablePointVisual>(LipPointVisuals).ToList());  
         }
-        foreach (var tp in _teethPointVisuals)
-        {
-            _mouthRig.RegisterPoint(tp, isTeeth: true);
-        }
-        _mouthRig.CalculateWeights();
         
         
         Instance = this;
@@ -148,6 +165,7 @@ public class AnimatedMouthController
             TeethVisualHelper.CreateTeethStripVisual(_teethCanvas, a, b, TOOTH_HEIGHT, TOOTH_WIDTH, TEETH_GAP_PRC);
         }
     }
+    
 
     private void UpdateVisuals()
     {
@@ -155,9 +173,55 @@ public class AnimatedMouthController
         UpdateTeethVisuals();
     }
     
+    
+    public void ResetToDefaultPositions()
+    {
+        for (int i = 0; i < LipPointVisuals.Count; i++)
+        {
+            Point defaultPos = _defaultLipPositions[i];
+
+            LipPointVisuals[i].MoveTo(defaultPos);
+
+            LipPointVisuals[i].NeutralPosition = defaultPos;
+ 
+            _lipKeyPointPositions[i] = defaultPos;
+        }
+
+        for (int i = 0; i < TeethPointVisuals.Count; i++)
+        {
+            Point defaultPos = _defaultTeethPositions[i];
+            
+            TeethPointVisuals[i].MoveTo(defaultPos);
+            TeethPointVisuals[i].NeutralPosition = defaultPos;
+            _teethKeyPointPositions[i] = defaultPos;
+        }
+
+        if (StateController.MouthMovementOption == MouthMovementOption.Rig)
+        {
+            _mouthRig.ResetToDefaultPositions(_defaultRigPositions);
+        }
+        else if(StateController.MouthMovementOption == MouthMovementOption.Blendshapes)
+        { 
+            BlendShapesPoseStorage.Initialize(TeethPointVisuals.Concat<MovablePointVisual>(LipPointVisuals).ToList());  
+        }
+        
+        
+        UpdateVisuals();
+    }
+    
     //GETTERS/SETTERS
     public List<Point> GetMouthKeyPoints()
     {
         return _lipKeyPointPositions;
     }
+    
+    public List<Point> GetTeethKeyPoints()
+    {
+        return _teethKeyPointPositions;
+    }
+    
+    
+    
+    
+    
 }

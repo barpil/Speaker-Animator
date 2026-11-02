@@ -4,20 +4,36 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:SpeakerAnimator.View.Panels"
+             xmlns:blend="clr-namespace:SpeakerAnimator.View.Mouth.BlendShapes"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <StackPanel Margin="10" HorizontalAlignment="Left">
             <Button Content="Print KeyPoint List" Background="Aquamarine" Width="120" Height="30" HorizontalAlignment="Left"
                     x:Name="PrintKeyPointListBtn" Click="PrintKeyPointListBtn_Click"/>
-            <StackPanel Orientation="Horizontal" >
-                <Button Content="Toggle Editable Points" Background="Aquamarine" Width="120" Height="30" HorizontalAlignment="Left"
-                        x:Name="ToggleEditableBtn" Click="ToggleEditablePointsBtn_Click"/>
-                <Label x:Name="EditablePointsStatusLabel">STATUS</Label>
-            </StackPanel>
-            <Button Content="Reset To Neutrals" Background="Aquamarine" Width="120" Height="30" HorizontalAlignment="Left"
-                    x:Name="ResetToNeutralsBtn" Click="ResetToNeutralsBtn_Click"/>
             
+            
+            
+            <StackPanel Orientation="Horizontal" >
+                <ComboBox x:Name="MouthOptionCB" Width="200"
+                          SelectionChanged="OnMouthMovementOption_SelectionChange">
+                    <ComboBoxItem Content="Rig"/>
+                    <ComboBoxItem Content="Blendshapes"/>
+                </ComboBox>
+                <Label x:Name="MouthMovementOptionLabel">STATUS</Label>
+            </StackPanel>
+            
+            <StackPanel x:Name="RigPanel">
+                <StackPanel Orientation="Horizontal" >
+                    <Button Content="Toggle Editable Points" Background="Aquamarine" Width="120" Height="30" HorizontalAlignment="Left"
+                            x:Name="ToggleEditableBtn" Click="ToggleEditablePointsBtn_Click"/>
+                    <Label x:Name="EditablePointsStatusLabel">STATUS</Label>
+                </StackPanel>
+                <Button Content="Reset To Neutrals" Background="Aquamarine" Width="120" Height="30" HorizontalAlignment="Left"
+                        x:Name="ResetToNeutralsBtn" Click="ResetToNeutralsBtn_Click"/>
+            </StackPanel>
+            
+            <blend:BlendShapesPanel x:Name="BlendShapesPanel"></blend:BlendShapesPanel>
             
         </StackPanel>
         

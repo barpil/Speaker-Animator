@@ -63,6 +63,7 @@ public class LabelAdorner : Adorner
     {
         //poczekanie az elementy zostana utworzone zeby mogl znalezc poprawnie AdornerLayer
         element.Loaded += OnPointLoaded;
+        
 
         void OnPointLoaded(object sender, RoutedEventArgs e)
         {
@@ -71,6 +72,13 @@ public class LabelAdorner : Adorner
             if (layer == null) return;
             var adorner = new LabelAdorner(element, labelContent, labelCenterOffset, fontSize, textColor ?? Brushes.White, textOutlineColor ?? Colors.Black, backgroundColor ?? Brushes.Transparent);
             layer.Add(adorner);
+            element.IsVisibleChanged += (sender, e) =>
+            {
+                adorner.Visibility = element.IsVisible
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            };
+            
         }
     }
 }
