@@ -1,41 +1,60 @@
-﻿using System.Numerics;
-using System.Windows;
+﻿using System.Windows;
 using SpeakerAnimator.Model.Mouth.BlendShapes;
-using Vector = System.Windows.Vector;
 
 namespace SpeakerAnimator.View.Mouth.BlendShapes;
 
 public class BlendShapeExecutor
 {
-   
-    public static void ExecuteBlendShapePose(ExecutePoseArgs args)
+    public static List<(MovablePointVisual point, Point position)> ComputeBlendShapeMoves(ExecutePoseArgs args)
     {
-        //Moze zamiast neutral powinienem kierowac sie od current miejsca dla punktu?
-        //Z drugiej strony wtedy ciezko bedzie chyba zrobic zeby doszlo do neutral pozycji
-        Dictionary<string, double> poseWeightsDict = args.PoseWeights.Where(kvp => kvp.Value >= 0.01).ToDictionary();
-        Dictionary<MovablePointVisual, Point> neutralPointsDict = BlendShapesPoseStorage.Instance.GetPointPositionsForPose("Neutral")
+        var moves = new List<(MovablePointVisual, Point)>();
+        
+        var poseWeightsDict = args.PoseWeights
+            .Where(kvp => kvp.Value >= 0.01)
+            .ToDictionary();
+            
+        var neutralPointsDict = BlendShapesPoseStorage.Instance
+            .GetPointPositionsForPose("Neutral")
             .ToDictionary(pr => pr.visual, pr => pr.position);
-        Dictionary<MovablePointVisual, Point> destinationPointsDict = BlendShapesPoseStorage.Instance.GetPointPositionsForPose("Neutral")
-            .ToDictionary(pr => pr.visual, pr => pr.position);
+            
+        var destinationPointsDict = new Dictionary<MovablePointVisual, Point>(neutralPointsDict);
+        
         foreach (var poseWeight in poseWeightsDict)
         {
             string poseName = poseWeight.Key;
             var positionRecords = BlendShapesPoseStorage.Instance.GetPointPositionsForPose(poseName);
+            
             foreach (var posRec in positionRecords)
             {
                 if (!neutralPointsDict.TryGetValue(posRec.visual, out Point neutralPos))
                     continue;
-                Vector vec = posRec.position - neutralPos;
-                destinationPointsDict[posRec.visual] += vec*poseWeight.Value;
+                    
+                var vec = posRec.position - neutralPos;
+                destinationPointsDict[posRec.visual] += vec * poseWeight.Value;
             }
         }
 
-        foreach (var desKVP in destinationPointsDict)
+        foreach (var kvp in destinationPointsDict)
         {
-            desKVP.Key.MoveTo(desKVP.Value);
+            moves.Add((kvp.Key, kvp.Value));
+        }
+
+        return moves;
+    }
+
+    public static void ApplyMoves(List<(MovablePointVisual point, Point position)> moves)
+    {
+        foreach (var (point, position) in moves)
+        {
+            point.MoveTo(position);
         }
     }
-    
+
+    public static void ExecuteBlendShapePose(ExecutePoseArgs args)
+    {
+        var moves = ComputeBlendShapeMoves(args);
+        ApplyMoves(moves);
+    }
 }
 
 public struct ExecutePoseArgs

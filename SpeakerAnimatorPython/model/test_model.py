@@ -10,7 +10,7 @@ from model.training_orchiestration import ModelRun
 
  #None = defaultowe z konfiguracji
 
-MODEL_CATALOG = "C:/Users/Bcom_/Documents/Projekty/SpeakerAnimator/SpeakerAnimatorPython/model/model_catalog/test"
+MODEL_CATALOG = "C:/Users/Bcom_/Documents/Projekty/SpeakerAnimator/SpeakerAnimatorPython/model/model_catalog/20261120_235501_TrainingMode.DEBUG_9d4f5d"
 
 DATA_PATH = "../data"
 SPLIT_NAME = None
@@ -35,6 +35,8 @@ def main():
         batch_size=BATCH_SIZE,
         num_workers=NUM_WORKERS,
     )
+    
+    run.diagnose_boundaries(test_split)
 
 
 if __name__ == "__main__":

@@ -87,20 +87,15 @@ public class AnimatedMouthController
         {
             _mouthRig = new MouthRig(_parentCanvas, initialRigPositions);
             foreach (var lp in LipPointVisuals)
-            {
                 _mouthRig.RegisterPoint(lp, isTeeth: false);
-            }
-
             foreach (var tp in TeethPointVisuals)
-            {
                 _mouthRig.RegisterPoint(tp, isTeeth: true);
-            }
 
             _mouthRig.CalculateWeights();
-        }else if(StateController.MouthMovementOption == MouthMovementOption.Blendshapes)
-        { 
-            BlendShapesPoseStorage.Initialize(TeethPointVisuals.Concat<MovablePointVisual>(LipPointVisuals).ToList());  
         }
+        
+        BlendShapesPoseStorage.Initialize(
+            TeethPointVisuals.Concat<MovablePointVisual>(LipPointVisuals).ToList());
         
         
         Instance = this;
@@ -115,18 +110,26 @@ public class AnimatedMouthController
 
     
 
-    
+    private int _suppressVisualUpdates;
+
+    public void BeginBatchUpdate() => _suppressVisualUpdates++;
+
+    public void EndBatchUpdate()
+    {
+        if (_suppressVisualUpdates > 0) _suppressVisualUpdates--;
+        if (_suppressVisualUpdates == 0) UpdateVisuals();
+    }
 
     private void OnLipKeyPointMoved(int keyPointIdx, Point newPosition)
     {
         _lipKeyPointPositions[keyPointIdx] = newPosition;
-        UpdateLipsVisuals();
+        if (_suppressVisualUpdates == 0) UpdateLipsVisuals();
     }
 
     private void OnToothKeyPointMoved(int keyPointIdx, Point newPosition)
     {
         _teethKeyPointPositions[keyPointIdx] = newPosition;
-        UpdateTeethVisuals();
+        if (_suppressVisualUpdates == 0) UpdateTeethVisuals();
     }
 
     private void UpdateLipsVisuals()
@@ -200,10 +203,9 @@ public class AnimatedMouthController
         {
             _mouthRig.ResetToDefaultPositions(_defaultRigPositions);
         }
-        else if(StateController.MouthMovementOption == MouthMovementOption.Blendshapes)
-        { 
-            BlendShapesPoseStorage.Initialize(TeethPointVisuals.Concat<MovablePointVisual>(LipPointVisuals).ToList());  
-        }
+
+        BlendShapesPoseStorage.Initialize(TeethPointVisuals.Concat<MovablePointVisual>(LipPointVisuals).ToList());  
+
         
         
         UpdateVisuals();

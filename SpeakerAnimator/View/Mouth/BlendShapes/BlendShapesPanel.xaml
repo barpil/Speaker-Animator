@@ -20,10 +20,11 @@
                           SelectionChanged="PoseCB_SelectionChanged">
 
                     <ComboBoxItem Content="Neutral"/>
-                    <ComboBoxItem Content="Open"/>
-                    <ComboBoxItem Content="Closed"/>
-                    <ComboBoxItem Content="Wide"/>
+                    <ComboBoxItem Content="Top-Lip-Up"/>
+                    <ComboBoxItem Content="Bottom-Lip-Down"/>
+                    <ComboBoxItem Content="Mouth-Open"/>
                     <ComboBoxItem Content="Pucker"/>
+                    <ComboBoxItem Content="Wide"/>
 
                     <ComboBox.ItemContainerStyle>
                         <Style TargetType="ComboBoxItem">
@@ -42,10 +43,11 @@
                             <MenuItem Header="Choose pose to override" IsEnabled="False" FontWeight="Bold" />
                             <Separator />
                             <MenuItem Header="Neutral" Click="SavePoseMenuItem_Click" />
-                            <MenuItem Header="Open" Click="SavePoseMenuItem_Click" />
-                            <MenuItem Header="Closed" Click="SavePoseMenuItem_Click" />
-                            <MenuItem Header="Wide" Click="SavePoseMenuItem_Click" />
+                            <MenuItem Header="Top-Lip-Up" Click="SavePoseMenuItem_Click" />
+                            <MenuItem Header="Bottom-Lip-Down" Click="SavePoseMenuItem_Click" />
+                            <MenuItem Header="Mouth-Open" Click="SavePoseMenuItem_Click" />
                             <MenuItem Header="Pucker" Click="SavePoseMenuItem_Click" />
+                            <MenuItem Header="Wide" Click="SavePoseMenuItem_Click" />
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
@@ -54,10 +56,11 @@
             </StackPanel>
             
             <StackPanel x:Name="SliderPanel" Margin="0 15 0 10" HorizontalAlignment="Left">
-                <local:ValueSlider Title="Open" />
-                <local:ValueSlider Margin="0 10 0 0" Title="Closed" />
-                <local:ValueSlider Margin="0 10 0 0" Title="Wide" />
+                <local:ValueSlider Title="Top-Lip-Up" />
+                <local:ValueSlider Margin="0 10 0 0" Title="Bottom-Lip-Down" />
+                <local:ValueSlider Margin="0 10 0 0" Title="Mouth-Open" />
                 <local:ValueSlider Margin="0 10 0 0" Title="Pucker" />
+                <local:ValueSlider Margin="0 10 0 0" Title="Wide" />
             </StackPanel>
 
         </StackPanel>
