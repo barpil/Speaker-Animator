@@ -18,15 +18,30 @@ class TrainConfig:
     debug_size: Optional[int] = 200
     seed: int = 0
     val_ratio: float = 0.1
+    
+    # Architecture
+    model_arch: str = "tds"
+    tds_blocks: int = 4
+    tds_kernel_size: int = 17
+    tds_expansion: int = 2
+    norm_type: str = "batch"
+    norm_groups: int = 8
+    lstm_layers: int = 2
 
     sample_rate: int = 16000
     n_fft: int = 400
     hop_length: int = 160
     n_mels: int = 80
     ignore_index: int = -100
+    min_silence_duration: float = 0.1
+    gain_aug_db: float = 18.0
+    include_leading_silence: bool = True
+    include_trailing_silence: bool = True
 
     hidden_dim: int = 256
     dropout: float = 0.2
+    use_flatness: bool = True
+    flatness_eps: float = 1e-8
 
     num_epochs: int = 15
     batch_size: int = 8

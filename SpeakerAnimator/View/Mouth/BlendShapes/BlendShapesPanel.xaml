@@ -24,6 +24,7 @@
                     <ComboBoxItem Content="Closed"/>
                     <ComboBoxItem Content="Wide"/>
                     <ComboBoxItem Content="Pucker"/>
+                    <ComboBoxItem Content="Stretch"/>
 
                     <ComboBox.ItemContainerStyle>
                         <Style TargetType="ComboBoxItem">
@@ -46,6 +47,7 @@
                             <MenuItem Header="Closed" Click="SavePoseMenuItem_Click" />
                             <MenuItem Header="Wide" Click="SavePoseMenuItem_Click" />
                             <MenuItem Header="Pucker" Click="SavePoseMenuItem_Click" />
+                            <MenuItem Header="Stretch" Click="SavePoseMenuItem_Click" />
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
@@ -54,10 +56,11 @@
             </StackPanel>
             
             <StackPanel x:Name="SliderPanel" Margin="0 15 0 10" HorizontalAlignment="Left">
-                <local:ValueSlider Title="Open" />
-                <local:ValueSlider Margin="0 10 0 0" Title="Closed" />
-                <local:ValueSlider Margin="0 10 0 0" Title="Wide" />
+                <local:ValueSlider Title="Top-Lip-Up" />
+                <local:ValueSlider Margin="0 10 0 0" Title="Bottom-Lip-Down" />
+                <local:ValueSlider Margin="0 10 0 0" Title="Mouth-Open" />
                 <local:ValueSlider Margin="0 10 0 0" Title="Pucker" />
+                <local:ValueSlider Margin="0 10 0 0" Title="Wide" />
             </StackPanel>
 
         </StackPanel>
