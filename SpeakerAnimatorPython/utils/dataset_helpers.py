@@ -17,78 +17,63 @@ def reduce_phoneme_accent(phoneme: str):
 
 
 ARPABET_TO_META = {
-    # Bilabial - zamknięte usta
     "P": "PP",
     "B": "PP",
     "M": "PP",
 
-    # Labiodental - warga i zęby
     "F": "FF",
     "V": "FF",
 
-    # Dental - język między zębami
     "TH": "TH",
     "DH": "TH",
 
-    # Alveolar - przednia część języka
     "T": "DD",
     "D": "DD",
 
-    # Velar - tylna część języka
     "K": "kk",
     "G": "kk",
     "HH": "kk",
     "NG": "kk",
 
-    # Affricates / postalveolar
     "CH": "CH",
     "JH": "CH",
     "SH": "CH",
     "ZH": "CH",
 
-    # Sibilants
     "S": "SS",
     "Z": "SS",
-
-    # Nasals / liquids
+    
     "N": "nn",
     "NG": "nn",
     "L": "nn",
 
-    # Rhotic
     "R": "RR",
     "ER": "RR",
     "AXR": "RR",
 
-    # Vowels - open
     "AA": "aa",
     "AH": "aa",
     "AX": "aa",
     "AY": "aa",
     "AW": "aa",
 
-    # Vowels - mid front
     "EH": "E",
     "AE": "E",
     "EY": "E",
 
-    # Vowels - close front
-    "IH": "ih",
-    "IY": "ih",
-    "IX": "ih",
-    "Y": "ih",
+    "IH": "I",
+    "IY": "I",
+    "IX": "I",
+    "Y": "I",
 
-    # Vowels - rounded
-    "AO": "oh",
-    "OW": "oh",
-    "OY": "oh",
+    "AO": "O",
+    "OW": "O",
+    "OY": "O",
 
-    # Vowels / rounded back
-    "UW": "ou",
-    "UH": "ou",
-    "W": "ou",
+    "UW": "U",
+    "UH": "U",
+    "W": "U",
 
-    # Silence / non-speech
     "SIL": "sil",
     "SP": "sil",
     "SPN": "sil",
@@ -106,5 +91,73 @@ def phoneme_to_viseme(phoneme: str) -> str:
     phoneme = reduce_phoneme_accent(phoneme.upper())
 
     return ARPABET_TO_META.get(phoneme, "unknown")
+
+
+SIL_TOKEN = "SIL"
+
+
+def insert_silence_segments(
+    phonemes,
+    audio_duration: float,
+    min_silence_duration: float = 0.03,
+    include_leading: bool = True,
+    include_trailing: bool = True,
+):
+    """
+    Uzupelnia dane labelami "sil" (silence) w miejscach gdzie nie ma zadnych
+    (bo dane nie maja zdefiniowanej ciszy)
+    """
+    ordered = sorted(phonemes, key=lambda p: float(p["start"]))
+
+    result = []
+    cursor = 0.0
+
+    for p in ordered:
+        start = float(p["start"])
+        end = float(p["end"])
+
+        if end <= start:
+            continue
+
+        start = max(start, cursor)
+        gap = start - cursor
+
+        if gap >= min_silence_duration and (cursor > 0 or include_leading):
+            result.append({"phoneme": SIL_TOKEN, "start": cursor, "end": start})
+
+        result.append({"phoneme": p["phoneme"], "start": start, "end": end})
+        cursor = end
+
+    tail = audio_duration - cursor
+    if include_trailing and tail >= min_silence_duration:
+        result.append({"phoneme": SIL_TOKEN, "start": cursor, "end": audio_duration})
+
+    return result
+
+
+def add_silence_to_dataset(
+    dataset,
+    min_silence_duration: float = 0.05,
+    include_leading: bool = True,
+    include_trailing: bool = True,
+    num_proc=None,
+    desc="Inserting silence segments",
+):
+
+    def _fn(example):
+        audio = example["audio"]
+        duration = len(audio["array"]) / float(audio["sampling_rate"])
+
+        return {
+            "phonemes": insert_silence_segments(
+                example["phonemes"],
+                duration,
+                min_silence_duration,
+                include_leading,
+                include_trailing,
+            )
+        }
+
+    return dataset.map(_fn, desc=desc, num_proc=num_proc)
 
 

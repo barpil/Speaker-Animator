@@ -9,9 +9,6 @@ namespace SpeakerAnimator.View.BlendShapes;
 
 public class MovableMouthRigPointVisual : MovablePointVisual
 {
-
-    
-    
     public MovableMouthRigPointVisual(
         Canvas parentCanvas,
         Point initialPosition,

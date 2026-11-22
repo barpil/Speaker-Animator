@@ -19,6 +19,138 @@ public static class PosesPresetsLibrary
             {
                 LipPoints =
                 [
+                    new(300, 295), new(405, 293), new(510, 295),
+                    new(510, 302), new(405, 303), new(300, 302)
+                ],
+                TeethPoints =
+                [
+                    new(280, 272), new(530, 269),
+                    new(280, 329), new(530, 329)
+                ]
+            }
+        },
+        {
+            "Top-Lip-Up", new()
+            {
+                LipPoints =
+                [
+                    new(295, 278), new(405, 266), new(515, 278),
+                    new(510, 302), new(405, 303), new(300, 302)
+                ],
+                TeethPoints =
+                [
+                    new(280, 272), new(530, 269),
+                    new(280, 329), new(530, 329)
+                ]
+            }
+        },
+        {
+            "Bottom-Lip-Down", new()
+            {
+                LipPoints =
+                [
+                    new(300, 295), new(405, 293), new(510, 295),
+                    new(515, 336), new(405, 341), new(295, 336)
+                ],
+                TeethPoints =
+                [
+                    new(280, 272), new(530, 269),
+                    new(280, 329), new(530, 329)
+                ]
+            }
+        },
+        {
+            "Mouth-Open", new()
+            {
+                LipPoints =
+                [
+                    new(295, 237), new(405, 231), new(511, 241),
+                    new(509, 380), new(405, 389), new(297, 380)
+                ],
+                TeethPoints =
+                [
+                    new(280, 211), new(530, 211),
+                    new(280, 411), new(530, 411)
+                ]
+            }
+        },
+        {
+            "Pucker", new()
+            {
+                LipPoints =
+                [
+                    new(365, 272), new(405, 260), new(445, 272),
+                    new(445, 321), new(405, 333), new(365, 321)
+
+                ],
+                TeethPoints =
+                [
+                    new(280, 239), new(530, 244),
+                    new(280, 352), new(530, 357)
+                ]
+            }
+        },
+        {
+            "Wide", new()
+            {
+                LipPoints =
+                [
+                    new(250, 295), new(405, 293), new(560, 295),
+                    new(560, 302), new(405, 303), new(250, 302)
+                ],
+                TeethPoints =
+                [
+                    new(280, 272), new(530, 269),
+                    new(280, 329), new(530, 329)
+                ]
+            }
+        }
+    };
+
+    //Potem mozna dodac wiecej presetow, na razie najprostsze rozwiazanie
+    public static Dictionary<string, PoseRecord> GetPoseDictFromPreset(List<MovablePointVisual> visuals)
+    {
+        var dict = DEFAULT_POSES.ToDictionary(d => d.Key, d =>
+        {
+            Queue<Point> lipQ = new Queue<Point>(d.Value.LipPoints);
+            Queue<Point> teethQ = new Queue<Point>(d.Value.TeethPoints);
+            List<PointPositionRecord> pointPositions = [];
+            foreach (var visual in visuals)
+            {
+                Point position;
+                if (visual is MovableLipPointVisual)
+                {
+                    if (lipQ.Count == 0) break;
+                    position = lipQ.Dequeue();
+                }
+                else if (visual is MovableTeethPointVisual)
+                {
+                    if (teethQ.Count == 0) break;
+                    position = teethQ.Dequeue();
+                }
+                else
+                {
+                    throw new ArgumentException("Unknow visual type approached while loading pose presets");
+                }
+
+                pointPositions.Add(new PointPositionRecord() { visual = visual, position = position });
+            }
+
+            var record = new PoseRecord() { name = d.Key, pointPositions = pointPositions };
+            return record;
+        });
+        return dict;
+    }
+}
+
+
+//Old preset:
+/*
+{
+            "Neutral", new()
+            {
+                LipPoints =
+                [
                     new(300, 287), new(398, 282), new(498, 285),
                     new(486, 313), new(390, 319), new(306, 312)
                 ],
@@ -39,8 +171,8 @@ public static class PosesPresetsLibrary
                 ],
                 TeethPoints =
                 [
-                    new(273, 264), new(530, 263),
-                    new(260, 320), new(534, 317)
+                    new(283, 264), new(535, 263),
+                    new(287, 320), new(519, 317)
                 ]
             }
         },
@@ -54,8 +186,8 @@ public static class PosesPresetsLibrary
                 ],
                 TeethPoints =
                 [
-                    new(275, 266), new(526, 271),
-                    new(275, 319), new(509, 322)
+                    new(283, 266), new(535, 271),
+                    new(287, 319), new(519, 322)
                 ]
             }
         },
@@ -69,8 +201,8 @@ public static class PosesPresetsLibrary
                 ],
                 TeethPoints =
                 [
-                    new(285, 211), new(525, 211),
-                    new(285, 411), new(525, 411)
+                    new(283, 211), new(535, 211),
+                    new(287, 411), new(519, 411)
                 ]
             }
         },
@@ -84,43 +216,24 @@ public static class PosesPresetsLibrary
                 ],
                 TeethPoints =
                 [
-                    new(241, 239), new(543, 244),
-                    new(261, 352), new(539, 357)
+                    new(283, 239), new(535, 244),
+                    new(287, 352), new(519, 357)
+                ]
+            }
+        },
+        {
+            "Stretch", new()
+            {
+                LipPoints =
+                [
+                    new(238, 285), new( 398,282), new(570,284),
+                    new(538,308), new(390,319), new(265,309)
+                ],
+                TeethPoints =
+                [
+                    new(283, 272), new(535, 269),
+                    new(287, 329), new(519, 329)
                 ]
             }
         }
-    };
-
-    //Potem mozna dodac wiecej presetow, na razie najprostsze rozwiazanie
-    public static Dictionary<string, PoseRecord> GetPoseDictFromPreset(List<MovablePointVisual> visuals)
-    {
-        var dict = DEFAULT_POSES.ToDictionary(d => d.Key, d =>
-        {
-            Queue<Point> lipQ = new Queue<Point>(d.Value.LipPoints);
-            Queue<Point> teethQ = new Queue<Point>(d.Value.TeethPoints);
-            List<PointPositionRecord> pointPositions = [];
-            foreach (var visual in visuals)
-            {
-                Point position;
-                if (visual is MovableLipPointVisual)
-                {
-                    position = lipQ.Dequeue();
-                }
-                else if (visual is MovableTeethPointVisual)
-                {
-                    position = teethQ.Dequeue();
-                }
-                else
-                {
-                    throw new ArgumentException("Unknow visual type approached while loading pose presets");
-                }
-
-                pointPositions.Add(new PointPositionRecord() { visual = visual, position = position });
-            }
-
-            var record = new PoseRecord() { name = d.Key, pointPositions = pointPositions };
-            return record;
-        });
-        return dict;
-    }
-}
+*/

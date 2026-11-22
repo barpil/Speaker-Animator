@@ -126,7 +126,7 @@ class FrameEvaluator:
             mel = mel.to(self.device, non_blocking=True)
             labels = labels.to(self.device, non_blocking=True)
 
-            logits = model(mel)
+            logits = model(mel, lengths)
 
             loss = self.criterion(
                 logits.reshape(-1, logits.size(-1)),
@@ -233,9 +233,10 @@ class Trainer:
 
         self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             self.optimizer,
-            mode="min",
+            mode="max",
             factor=0.5,
-            patience=2,
+            patience=1,
+            min_lr=1e-5,
         )
 
         self.use_amp = bool(config.use_amp and device.type == "cuda")
@@ -246,7 +247,7 @@ class Trainer:
             else None
         )
 
-        self.best_val_loss = float("inf")
+        self.best_val_f1 = -1.0
 
     def train_one_epoch(self, epoch):
         self.model.train()
@@ -275,7 +276,7 @@ class Trainer:
                 dtype=torch.float16,
                 enabled=self.use_amp,
             ):
-                logits = self.model(mel)
+                logits = self.model(mel, lengths)
 
                 loss = self.criterion(
                     logits.reshape(-1, logits.size(-1)),
@@ -368,7 +369,8 @@ class Trainer:
             val_acc = val_result["accuracy"]
             val_report_dict = val_result["report_dict"]
 
-            self.scheduler.step(val_loss)
+            val_f1 = val_result["report_dict"].get("macro avg", {}).get("f1-score", 0.0)
+            self.scheduler.step(val_f1)
 
             current_lr = self.optimizer.param_groups[0]["lr"]
             duration_sec = time.time() - start_time
@@ -396,10 +398,10 @@ class Trainer:
                 print("Validation classification report:")
                 print(val_result["report_str"])
 
-            if val_loss < self.best_val_loss:
-                self.best_val_loss = val_loss
+            if val_f1 > self.best_val_f1:
+                self.best_val_f1 = val_f1
                 self.save_checkpoint(epoch, val_loss)
-                print(f"Saved new best model. Val Loss: {val_loss:.4f}")
+                print(f"Saved new best model. Val macro F1: {val_f1:.4f}")
 
         print("\nTraining finished.")
         print(f"Best model saved to: {self.save_dir / 'best_model.pt'}")

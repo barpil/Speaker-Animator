@@ -6,6 +6,8 @@ namespace SpeakerAnimator.Model.Mouth.BlendShapes;
 public class BlendShapesPoseStorage
 {
     public static BlendShapesPoseStorage? Instance;
+    public static bool IsInitialized => Instance != null;
+    
     //Neutral - naturalne usta w spoczynku
     //Open - Otarte usta bez ruszania szczeka
     //Closed - Zamkniete usta bez ruszania szczeka
@@ -14,8 +16,7 @@ public class BlendShapesPoseStorage
 
     
     
-    
-    
+  
     private Dictionary<string, PoseRecord> _posesDict;
     private Dictionary<string, PoseRecord> _defaultPosesDict;
     
@@ -46,7 +47,6 @@ public class BlendShapesPoseStorage
 
     public List<PointPositionRecord> GetPointPositionsForPose(string poseName)
     {
-        //pewnie cos o bledzie przydaloby sie dodac
         return _posesDict.GetValueOrDefault(poseName, _defaultPosesDict["Neutral"]).pointPositions;
     }
     
@@ -73,13 +73,4 @@ public struct PointPositionRecord
 {
     public MovablePointVisual visual;
     public Point position;
-}
-
-public enum BlendShapePose
-{
-    Neutral,
-    Open,
-    Closed,
-    Wide,
-    Pucker
 }
