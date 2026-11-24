@@ -20,11 +20,11 @@
                           SelectionChanged="PoseCB_SelectionChanged">
 
                     <ComboBoxItem Content="Neutral"/>
-                    <ComboBoxItem Content="Open"/>
-                    <ComboBoxItem Content="Closed"/>
-                    <ComboBoxItem Content="Wide"/>
+                    <ComboBoxItem Content="Top-Lip-Up"/>
+                    <ComboBoxItem Content="Bottom-Lip-Down"/>
+                    <ComboBoxItem Content="Mouth-Open"/>
                     <ComboBoxItem Content="Pucker"/>
-                    <ComboBoxItem Content="Stretch"/>
+                    <ComboBoxItem Content="Wide"/>
 
                     <ComboBox.ItemContainerStyle>
                         <Style TargetType="ComboBoxItem">
@@ -43,11 +43,11 @@
                             <MenuItem Header="Choose pose to override" IsEnabled="False" FontWeight="Bold" />
                             <Separator />
                             <MenuItem Header="Neutral" Click="SavePoseMenuItem_Click" />
-                            <MenuItem Header="Open" Click="SavePoseMenuItem_Click" />
-                            <MenuItem Header="Closed" Click="SavePoseMenuItem_Click" />
-                            <MenuItem Header="Wide" Click="SavePoseMenuItem_Click" />
+                            <MenuItem Header="Top-Lip-Up" Click="SavePoseMenuItem_Click" />
+                            <MenuItem Header="Bottom-Lip-Down" Click="SavePoseMenuItem_Click" />
+                            <MenuItem Header="Mouth-Open" Click="SavePoseMenuItem_Click" />
                             <MenuItem Header="Pucker" Click="SavePoseMenuItem_Click" />
-                            <MenuItem Header="Stretch" Click="SavePoseMenuItem_Click" />
+                            <MenuItem Header="Wide" Click="SavePoseMenuItem_Click" />
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
